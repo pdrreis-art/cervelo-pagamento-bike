@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cálculo de Pagamento | Cervélo Brasil</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #E8001D;
+      --dark:   #0A0A0A;
+      --card:   #111111;
+      --card2:  #141414;
+      --border: #1E1E1E;
+      --mid:    #666666;
+      --light:  #F0F0F0;
+      --white:  #FFFFFF;
+      --green:  #00C47A;
+    }
+
+    html, body {
+      background: var(--dark);
+      color: var(--light);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .logo span { color: var(--red); }
+    .back-link {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 52px 40px 36px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+    .hero h1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(34px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 14px;
+    }
+    .accent-line {
+      width: 40px; height: 3px;
+      background: var(--red);
+      margin-bottom: 14px;
+    }
+    .hero p {
+      font-size: 14px;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+
+    /* ── TABELA DE REFERÊNCIA ── */
+    .ref-toggle {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 40px 20px;
+    }
+    .ref-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color .2s, border-color .2s;
+    }
+    .ref-btn:hover { color: var(--white); border-color: #333; }
+    .ref-btn svg { width:12px; height:12px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; transition: transform .3s; }
+    .ref-btn.open svg { transform: rotate(180deg); }
+
+    .ref-table-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 40px 24px;
+      display: none;
+    }
+    .ref-table-wrap.visible { display: block; }
+
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .ref-table th {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding: 10px 16px;
+      text-align: center;
+      background: #0D0D0D;
+      border: 1px solid var(--border);
+    }
+    .ref-table td {
+      padding: 10px 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+      color: var(--light);
+      background: var(--card);
+    }
+    .ref-table tr:hover td { background: #161616; }
+    .ref-table td:last-child { color: var(--green); font-weight: 500; }
+
+    /* ── FORM ── */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+
+    .form-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 36px 32px;
+      margin-bottom: 3px;
+    }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--mid);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .fg-full { grid-column: 1 / -1; }
+
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    input[type="text"] {
+      background: #0D0D0D;
+      border: 1px solid var(--border);
+      border-bottom: 1px solid #333;
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      padding: 13px 15px;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    input[type="text"]::placeholder { color: #2a2a2a; }
+    input[type="text"]:focus { border-color: var(--red); }
+
+    /* entrada % badge */
+    .pct-badge {
+      display: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--mid);
+      margin-top: 4px;
+    }
+    .pct-badge.show { display: block; }
+    .pct-badge b { color: var(--green); }
+
+    /* botões */
+    .btn-row { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    .btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 15px 32px;
+      border: none;
+      cursor: pointer;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary { background: var(--red); color: var(--white); }
+    .btn-ghost   { background: transparent; color: var(--mid); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--white); border-color: #444; }
+
+    /* ── RESULTADO ── */
+    .result-card {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--red);
+      padding: 36px 32px;
+      display: none;
+      animation: fadeUp .4s ease;
+    }
+    .result-card.visible { display: block; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .res-client-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      text-transform: uppercase;
+      color: var(--white);
+      margin: 4px 0 2px;
+    }
+    .res-bike { font-size: 13px; color: var(--mid); }
+
+    /* badge de faixa */
+    .faixa-badge {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border: 1px solid #1A3A28;
+      background: #0A1A12;
+      color: var(--green);
+      white-space: nowrap;
+    }
+
+    .rows { display: flex; flex-direction: column; gap: 2px; }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: #0D0D0D;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .row.hl-green { background: #0A1A12; border-color: #1A3A28; }
+
+    .row-label strong {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: 2px;
+    }
+    .row-label span { font-size: 11px; color: var(--mid); }
+
+    .row-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--white);
+      text-align: right;
+    }
+    .row.hl-green .row-value { color: var(--green); }
+
+    /* parcela destaque */
+    .parcela-block {
+      background: var(--red);
+      padding: 22px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .parcela-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.7);
+    }
+    .parcela-label strong {
+      display: block;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+      margin-top: 3px;
+    }
+    .parcela-value {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 36px;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 40px;
+      text-align: center;
+      font-size: 11px;
+      color: #333;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 600px) {
+      header, .hero, .ref-toggle, .ref-table-wrap, .container { padding-left: 20px; padding-right: 20px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .fg-full { grid-column: 1; }
+      .form-card, .result-card { padding: 28px 20px; }
+      .parcela-value { font-size: 28px; }
+      footer { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="https://cervelobr.com" class="logo">Cervélo <span>Brasil</span></a>
+  <a href="https://cervelobr.com/apoio" class="back-link">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Voltar ao Apoio
+  </a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-label">Ferramentas · Vendedores</p>
+  <h1>Cálculo de Pagamento</h1>
+  <div class="accent-line"></div>
+  <p>Preencha os dados abaixo para simular o parcelamento com entrada e desconto proporcional.</p>
+</section>
+
+<!-- TABELA DE REFERÊNCIA (colapsável) -->
+<div class="ref-toggle">
+  <button class="ref-btn" id="refBtn" onclick="toggleRef()">
+    Ver tabela de desconto
+    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </button>
+</div>
+<div class="ref-table-wrap" id="refTable">
+  <table class="ref-table">
+    <thead>
+      <tr>
+        <th>% da Entrada sobre o Valor do Produto</th>
+        <th>% de Desconto sobre a Entrada</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>0% a 9,9%</td><td>0%</td></tr>
+      <tr><td>10% a 39%</td><td>5%</td></tr>
+      <tr><td>40% a 49%</td><td>6%</td></tr>
+      <tr><td>50% a 69%</td><td>7%</td></tr>
+      <tr><td>70% a 100%</td><td>8%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="container">
+  <div class="form-card">
+    <p class="section-label">Dados da Venda</p>
+    <div class="form-grid">
+
+      <div class="field fg-full">
+        <label for="nome">Nome do Cliente</label>
+        <input type="text" id="nome" placeholder="Ex: João Silva"/>
+      </div>
+
+      <div class="field fg-full">
+        <label for="bike">Bicicleta Cervélo</label>
+        <input type="text" id="bike" placeholder="Ex: Cervélo S5 Dura-Ace Di2 2026"/>
+      </div>
+
+      <div class="field">
+        <label for="valor">Valor da Bicicleta (R$)</label>
+        <input type="text" id="valor" placeholder="Ex: 45.000,00" inputmode="numeric"/>
+      </div>
+
+      <div class="field">
+        <label for="entrada">Valor da Entrada (R$)</label>
+        <input type="text" id="entrada" placeholder="Ex: 10.000,00" inputmode="numeric"/>
+        <span class="pct-badge" id="pctBadge">Entrada representa <b id="pctVal">—</b> do valor da bike</span>
+      </div>
+
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="calcular()">Calcular</button>
+      <button class="btn btn-ghost"   onclick="reiniciar()">Reiniciar</button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result-card" id="resultado">
+
+    <div class="result-head">
+      <div>
+        <p class="section-label" style="border:none;padding:0;margin:0 0 4px;">Simulação de Pagamento</p>
+        <p class="res-client-name" id="res-nome">—</p>
+        <p class="res-bike"        id="res-bike">—</p>
+      </div>
+      <span class="faixa-badge" id="res-faixa">Faixa —</span>
+    </div>
+
+    <div class="rows">
+
+      <div class="row">
+        <div class="row-label">
+          <strong>Valor da Bicicleta</strong>
+          <span>Preço cheio do produto</span>
+        </div>
+        <div class="row-value" id="res-valor">R$ —</div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <strong>Valor da Entrada</strong>
+          <span>Pago no ato da compra</span>
+        </div>
+        <div class="row-value" id="res-entrada">R$ —</div>
+      </div>
+
+      <div class="row hl-green">
+        <div class="row-label">
+          <strong>Desconto sobre a Entrada</strong>
+          <span id="res-desc-label">% × valor da entrada, descontado do saldo</span>
+        </div>
+        <div class="row-value" id="res-desconto">R$ —</div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <strong>Saldo a ser Parcelado</strong>
+          <span>(Bike − entrada) − desconto</span>
+        </div>
+        <div class="row-value" id="res-saldo">R$ —</div>
+      </div>
+
+      <div class="row">
+        <div class="row-label">
+          <strong>Valor Final da Bicicleta</strong>
+          <span>Entrada + saldo parcelado</span>
+        </div>
+        <div class="row-value" id="res-valor-final">R$ —</div>
+      </div>
+
+    </div>
+
+    <div class="parcela-block">
+      <div class="parcela-label">
+        Parcelamento em
+        <strong>12× sem juros</strong>
+      </div>
+      <div class="parcela-value" id="res-parcela">R$ —</div>
+    </div>
+
+  </div>
+  <!-- /resultado -->
+
+</div>
+
+<footer>
+  Cervélo Brasil &mdash; Área de uso exclusivo interno &mdash; Não compartilhar este link com clientes
+</footer>
+
+<script>
+  /* ── formatação ── */
+  function fmt(n) {
+    return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+  function parse(str) {
+    var s = str.replace(/[^\d,\.]/g, '');
+    if (s.indexOf(',') !== -1) { s = s.replace(/\./g, '').replace(',', '.'); }
+    return parseFloat(s) || 0;
+  }
+  function maskBRL(id) {
+    document.getElementById(id).addEventListener('input', function () {
+      var raw = this.value.replace(/\D/g, '');
+      if (!raw) { this.value = ''; updatePct(); return; }
+      var num = parseInt(raw, 10) / 100;
+      this.value = num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      updatePct();
+    });
+  }
+  maskBRL('valor');
+  maskBRL('entrada');
+
+  /* ── badge % em tempo real ── */
+  function updatePct() {
+    var v = parse(document.getElementById('valor').value);
+    var e = parse(document.getElementById('entrada').value);
+    var badge = document.getElementById('pctBadge');
+    var pctEl = document.getElementById('pctVal');
+    if (v > 0 && e > 0) {
+      var pct = (e / v) * 100;
+      pctEl.textContent = pct.toFixed(1).replace('.', ',') + '%';
+      badge.classList.add('show');
+    } else {
+      badge.classList.remove('show');
+    }
+  }
+  document.getElementById('valor').addEventListener('input', updatePct);
+  document.getElementById('entrada').addEventListener('input', updatePct);
+
+  /* ── tabela de desconto ── */
+  function getDesconto(pct) {
+    if (pct < 10)  return { taxa: 0, faixa: '0% a 9,9%' };
+    if (pct < 40)  return { taxa: 5, faixa: '10% a 39%' };
+    if (pct < 50)  return { taxa: 6, faixa: '40% a 49%' };
+    if (pct < 70)  return { taxa: 7, faixa: '50% a 69%' };
+                   return { taxa: 8, faixa: '70% a 100%' };
+  }
+
+  /* ── calcular ── */
+  function calcular() {
+    var nome    = document.getElementById('nome').value.trim();
+    var bike    = document.getElementById('bike').value.trim();
+    var valor   = parse(document.getElementById('valor').value);
+    var entrada = parse(document.getElementById('entrada').value);
+
+    if (!nome || !bike || valor <= 0 || entrada <= 0) {
+      alert('Por favor, preencha todos os campos antes de calcular.');
+      return;
+    }
+    if (entrada >= valor) {
+      alert('O valor da entrada não pode ser igual ou maior que o valor da bicicleta.');
+      return;
+    }
+
+    var pct      = (entrada / valor) * 100;
+    var info     = getDesconto(pct);
+    var desconto = entrada * (info.taxa / 100);   // % da faixa × valor da entrada
+    var saldo    = (valor - entrada) - desconto;   // saldo bruto − desconto
+    var parcela  = saldo / 12;
+    var valorFinal = entrada + saldo;              // valor final da bike com desconto
+
+    document.getElementById('res-nome').textContent       = nome.toUpperCase();
+    document.getElementById('res-bike').textContent       = bike;
+    document.getElementById('res-faixa').textContent      = 'Faixa ' + info.faixa;
+    document.getElementById('res-valor').textContent      = fmt(valor);
+    document.getElementById('res-entrada').textContent    = fmt(entrada);
+    document.getElementById('res-desc-label').textContent = info.taxa + '% × valor da entrada, descontado do saldo';
+    document.getElementById('res-desconto').textContent   = fmt(desconto);
+    document.getElementById('res-saldo').textContent      = fmt(saldo);
+    document.getElementById('res-valor-final').textContent = fmt(valorFinal);
+    document.getElementById('res-parcela').textContent    = fmt(parcela);
+
+    var res = document.getElementById('resultado');
+    res.classList.add('visible');
+    res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ── reiniciar ── */
+  function reiniciar() {
+    ['nome','bike','valor','entrada'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('resultado').classList.remove('visible');
+    document.getElementById('pctBadge').classList.remove('show');
+    document.getElementById('nome').focus();
+  }
+
+  /* ── tabela ref toggle ── */
+  function toggleRef() {
+    var btn   = document.getElementById('refBtn');
+    var table = document.getElementById('refTable');
+    btn.classList.toggle('open');
+    table.classList.toggle('visible');
+    btn.childNodes[0].textContent = btn.classList.contains('open')
+      ? 'Ocultar tabela de desconto '
+      : 'Ver tabela de desconto ';
+  }
+</script>
+
+</body>
+</html>
